@@ -5,7 +5,27 @@ class Core {
     private $metodo;
     private $parametros = array();
 
-    public function run() 
+    public function __construct()
+    {   
+        $this->verificaUri();
+    }
+
+    public function run()
+    {
+        $controllerCorrente = $this->getController();
+
+        $c = new $controllerCorrente();
+        /*
+            call_user_func_array( array(objeto instanciado, método da classe), parâmetros para o método) 
+            
+            isso vai fazer com que o método enviado pela URI seja chamado logo após o objeto ser instanciado, já passando os parâmetros
+        */
+
+        call_user_func_array(array($c, $this->getMetodo()), $this->getParametros());
+
+    }
+
+    public function verificaUri() 
     {
 
         $url = explode("index.php", $_SERVER["PHP_SELF"]);
@@ -16,26 +36,34 @@ class Core {
             array_shift($url);
             
             // Pega o controller
-            $this->controller = $url[0];
+            $this->controller = ucfirst($url[0]) . "Controller";
             array_shift($url);
 
             // Pega o método
-            $this->metodo = $url[0];
-            array_shift($url);
+            if(isset($url[0])) {
+                $this->metodo = $url[0];
+                array_shift($url);
+            }
 
             // Pega os parâmetros
-            $this->parametros = array_filter($url);
-            
+            if(isset($url[0])) {
+                $this->parametros = array_filter($url);            
+            }
 
+        } else {
+            $this->controller = ucfirst(CONTROLLER_PADRAO) . "Controller";
         }
-        echo "<pre>";
-        print_r($url);
+
     }
 
     
     public function getController()
     {
-        return $this->controller;
+        if(class_exists(NAMESPACE_CONTROLLER . $this->controller)) {
+            return NAMESPACE_CONTROLLER . $this->controller;
+        }
+
+        return NAMESPACE_CONTROLLER . ucfirst(CONTROLLER_PADRAO) . "Controller";
     }
 
     public function setController($controller)
@@ -47,7 +75,13 @@ class Core {
 
     public function getMetodo()
     {
-        return $this->metodo;
+        if (method_exists(NAMESPACE_CONTROLLER . $this->controller, $this->metodo)) {
+            return $this->metodo;
+        }
+
+        // se o método não existir, retorna o método padrão "index"
+        return METODO_PADRAO;
+
     }
 
 
