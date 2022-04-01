@@ -13,6 +13,12 @@ class Controller{
         */
         extract($viewDados);
 
+<<<<<<< HEAD
+=======
+        echo "<pre>";
+        print_r($viewDados);
+
+>>>>>>> fcf47ae07b6da8f121abae96e22d53fec71c580c
         include "app/views/" . $viewName . ".php";
 
     }

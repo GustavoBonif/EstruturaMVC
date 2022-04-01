@@ -9,11 +9,16 @@
 <body>
     <h1>Curso de MVC</h1>
     <p>Estamos estudando PHP</p>
+<<<<<<< HEAD
 <?php
     foreach($clientes as $cliente) {
         echo $cliente["cliente"] . "<br>";
     }
 ?>
+=======
+
+    <p>valores: <?php echo $nome . " - " . $email?> </p>
+>>>>>>> fcf47ae07b6da8f121abae96e22d53fec71c580c
 
 </body>
 </html>
